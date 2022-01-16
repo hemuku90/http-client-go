@@ -32,6 +32,25 @@ func (c *httpClient) do(httpMethod string, url string, headers http.Header, body
 	return response, err
 }
 
+//getHTTPClient: returns *http.Client
+func (c *httpClient) getHTTPClient() *http.Client {
+	if c.client != nil {
+		return c.client
+	}
+	client := &http.Client{
+		Timeout: c.getconnectionTimeout() + c.getresponseTimeout(),
+		Transport: &http.Transport{
+			MaxIdleConnsPerHost:   c.getmaxIdleConnections(),
+			ResponseHeaderTimeout: c.getresponseTimeout(), //Response timeout after request is send
+			DialContext: (&net.Dialer{
+				Timeout: c.getconnectionTimeout(), // Socket connection timeout
+			}).DialContext,
+		},
+	}
+	c.client = client
+	return c.client
+}
+
 //GetRequestBody: returns []byte,error
 func (c *httpClient) GetRequestBody(contentType string, body interface{}) ([]byte, error) {
 	if body == nil {
@@ -43,24 +62,6 @@ func (c *httpClient) GetRequestBody(contentType string, body interface{}) ([]byt
 	default:
 		return json.Marshal(body)
 	}
-}
-
-//getHTTPClient: returns *http.Client
-func (c *httpClient) getHTTPClient() *http.Client {
-	if c.client != nil {
-		return c.client
-	}
-	client := &http.Client{
-		Transport: &http.Transport{
-			MaxIdleConnsPerHost:   c.getmaxIdleConnections(),
-			ResponseHeaderTimeout: c.getresponseTimeout(), //Response timeout after request is send
-			DialContext: (&net.Dialer{
-				Timeout: c.getrconnectionTimeout(), // Socket connection timeout
-			}).DialContext,
-		},
-	}
-	c.client = client
-	return c.client
 }
 
 func (c *httpClient) getmaxIdleConnections() int {
@@ -85,7 +86,7 @@ func (c *httpClient) getresponseTimeout() time.Duration {
 	return defaultresponseTimeout
 }
 
-func (c *httpClient) getrconnectionTimeout() time.Duration {
+func (c *httpClient) getconnectionTimeout() time.Duration {
 	if c.connectionTimeout > 0 {
 		return c.connectionTimeout
 	}
@@ -96,7 +97,7 @@ func (c *httpClient) getrconnectionTimeout() time.Duration {
 	return defaultconnectionTimeout
 }
 
-func (c *httpClient) disableTimeouts(disableTimeouts bool) {
+func (c *httpClient) DisableTimeouts(disableTimeouts bool) {
 	c.disableTimeout = disableTimeouts
 }
 

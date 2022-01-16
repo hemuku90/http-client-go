@@ -96,6 +96,7 @@ func deleteRequest() {
 	commonHeaders := make(http.Header)
 	commonHeaders.Set("Content-Type", "application/json")
 	httpClient.SetHeaders(commonHeaders)
+	httpClient.DisableTimeouts(true)
 	response, err := httpClient.Delete(DeleteURL, nil)
 	if err != nil {
 		panic(err)

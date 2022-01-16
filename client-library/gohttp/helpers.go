@@ -15,6 +15,6 @@ func (c *httpClient) SetConnectionTimeout(timeout time.Duration) {
 func (c *httpClient) SetRequestTimeout(timeout time.Duration) {
 	c.responseTimeout = timeout
 }
-func (c *httpClient) SetMaxIdleConenctionPerHost(maxIdleConenctionPerHost int) {
-	c.maxIdleConnections = maxIdleConenctionPerHost
+func (c *httpClient) SetMaxIdleConenctionPerHost(maxIdleConnectionPerHost int) {
+	c.maxIdleConnections = maxIdleConnectionPerHost
 }

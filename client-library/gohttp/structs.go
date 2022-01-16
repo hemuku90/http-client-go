@@ -16,7 +16,7 @@ type httpClient struct {
 
 type HttpClient interface {
 	SetHeaders(headers http.Header)
-	disableTimeouts(disableTimeouts bool)
+	DisableTimeouts(disableTimeouts bool)
 	SetConnectionTimeout(timeout time.Duration)
 	SetRequestTimeout(timeout time.Duration)
 	SetMaxIdleConenctionPerHost(maxIdleConenctionPerHost int)
