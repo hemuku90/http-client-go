@@ -4,19 +4,21 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"strings"
 	"time"
 )
 
+//Defaults
 const (
 	defaultmaxIdleConnections = 5
 	defaultresponseTimeout    = 5 * time.Second
 	defaultconnectionTimeout  = 2 * time.Second
 )
 
-func (c *httpClient) do(httpMethod string, url string, headers http.Header, body interface{}) (*http.Response, error) {
+func (c *httpClient) do(httpMethod string, url string, headers http.Header, body interface{}) (*Response, error) {
 	allHeaders := c.GetRequestHeaders(headers)
 	requestBody, err := c.GetRequestBody(allHeaders.Get("Content-Type"), body)
 	if err != nil {
@@ -24,12 +26,25 @@ func (c *httpClient) do(httpMethod string, url string, headers http.Header, body
 	}
 	request, err := http.NewRequest(httpMethod, url, bytes.NewBuffer(requestBody))
 	if err != nil {
-		return nil, fmt.Errorf("unable to create request to %s", url)
+		return nil, fmt.Errorf("unable to create request for %s", url)
 	}
 	request.Header = allHeaders //Set custom and common headers for the request
 	client := c.getHTTPClient()
 	response, err := client.Do(request)
-	return response, err
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+	responseBody, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error: %v", err)
+	}
+	customResponse := Response{
+		headers:    response.Header,
+		statusCode: response.StatusCode,
+		body:       responseBody,
+	}
+	return &customResponse, err
 }
 
 //getHTTPClient: returns *http.Client
@@ -65,47 +80,43 @@ func (c *httpClient) GetRequestBody(contentType string, body interface{}) ([]byt
 }
 
 func (c *httpClient) getmaxIdleConnections() int {
-	if c.maxIdleConnections > 0 {
-		return c.maxIdleConnections
+	if c.builder.maxIdleConnections > 0 {
+		return c.builder.maxIdleConnections
 	}
 	//Disable Timeouts
-	if c.disableTimeout {
+	if c.builder.disableTimeout {
 		return 0
 	}
 	return defaultmaxIdleConnections
 }
 
 func (c *httpClient) getresponseTimeout() time.Duration {
-	if c.responseTimeout > 0 {
-		return c.responseTimeout
+	if c.builder.responseTimeout > 0 {
+		return c.builder.responseTimeout
 	}
 	//Disable Timeouts
-	if c.disableTimeout {
+	if c.builder.disableTimeout {
 		return 0
 	}
 	return defaultresponseTimeout
 }
 
 func (c *httpClient) getconnectionTimeout() time.Duration {
-	if c.connectionTimeout > 0 {
-		return c.connectionTimeout
+	if c.builder.connectionTimeout > 0 {
+		return c.builder.connectionTimeout
 	}
 	//Disable Timeouts
-	if c.disableTimeout {
+	if c.builder.disableTimeout {
 		return 0
 	}
 	return defaultconnectionTimeout
-}
-
-func (c *httpClient) DisableTimeouts(disableTimeouts bool) {
-	c.disableTimeout = disableTimeouts
 }
 
 //getRequestHeaders returns custom headers from do() and common headers for httpClient instance
 func (c *httpClient) GetRequestHeaders(requestHeaders http.Header) http.Header {
 	finalHeaders := make(http.Header)
 	//Default headers for the request
-	for header, value := range c.headers {
+	for header, value := range c.builder.headers {
 		if len(value) > 0 {
 			finalHeaders.Set(header, value[0])
 		}

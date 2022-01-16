@@ -12,7 +12,7 @@ func TestGetRequestHeaders(t *testing.T) {
 	headers := make(http.Header)
 	headers.Set("Content-Type", "application/json")
 	headers.Set("User-Agent", "http-client")
-	client.headers = headers
+	client.builder.headers = headers
 	//Execution
 	requestHeaders := make(http.Header)
 	requestHeaders.Set("Custom-Header", "Custom-HTTP-Client-Header")

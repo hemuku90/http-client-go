@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 
@@ -19,7 +17,10 @@ const (
 
 //Singleton
 var (
-	httpClient = gohttp.NewClient()
+	httpClient = gohttp.NewBuilder().DisableTimeouts(true).
+		SetConnectionTimeout(2 * time.Second).
+		SetRequestTimeout(3 * time.Second).
+		Build()
 )
 
 type Data struct {
@@ -45,7 +46,8 @@ type AccountAttributes struct {
 	AcceptanceQualifier string   `json:"acceptance_qualifier,omitempty"`
 }
 
-func NewBody() *Data {
+//Create request Payload
+func payload() *Data {
 	country := "GB"
 	body := &AccountData{
 		ID:             "ad27e265-9605-4b4b-a0e5-3003ea9cc4dc",
@@ -67,6 +69,7 @@ func NewBody() *Data {
 	return data
 }
 
+//Main
 func main() {
 	fmt.Println(" ########### POST Request Output #######")
 	postRequest()
@@ -79,49 +82,30 @@ func main() {
 func getRequest() {
 	commonHeaders := make(http.Header)
 	commonHeaders.Set("Content-Type", "application/json")
-	httpClient.SetHeaders(commonHeaders)
-	httpClient.SetConnectionTimeout(1 * time.Second)
+
 	response, err := httpClient.Get(PostUrl, nil)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(response.StatusCode)
-	bytes, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Printf("Error while reading the response body")
-	}
-	fmt.Println(string(bytes))
+	fmt.Println(response.String())
 }
 func deleteRequest() {
 	commonHeaders := make(http.Header)
 	commonHeaders.Set("Content-Type", "application/json")
-	httpClient.SetHeaders(commonHeaders)
-	httpClient.DisableTimeouts(true)
 	response, err := httpClient.Delete(DeleteURL, nil)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(response.StatusCode)
-	bytes, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Printf("Error while reading the response body")
-	}
-	fmt.Println(string(bytes))
+	fmt.Println(response.String())
 }
 
 func postRequest() {
 	commonHeaders := make(http.Header)
 	commonHeaders.Set("Content-Type", "application/json")
-	httpClient.SetHeaders(commonHeaders)
-	body := NewBody()
+	body := payload()
 	response, err := httpClient.Post(PostUrl, nil, body)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(response.StatusCode)
-	bytes, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Printf("Error while reading the response body")
-	}
-	fmt.Println(string(bytes))
+	fmt.Println(response.String())
 }
