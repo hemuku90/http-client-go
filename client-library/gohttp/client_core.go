@@ -4,21 +4,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
-func (c *httpClient) GetRequestBody(contentType string, body interface{}) ([]byte, error) {
-	if body == nil {
-		return nil, nil
-	}
-	switch strings.ToLower(contentType) {
-	case "application/json":
-		return json.Marshal(body)
-	default:
-		return json.Marshal(body)
-	}
-}
+const (
+	defaultmaxIdleConnections = 5
+	defaultresponseTimeout    = 5 * time.Second
+	defaultconnectionTimeout  = 2 * time.Second
+)
 
 func (c *httpClient) do(httpMethod string, url string, headers http.Header, body interface{}) (*http.Response, error) {
 	allHeaders := c.GetRequestHeaders(headers)
@@ -30,10 +26,78 @@ func (c *httpClient) do(httpMethod string, url string, headers http.Header, body
 	if err != nil {
 		return nil, fmt.Errorf("unable to create request to %s", url)
 	}
-	//Set custom and common headers for the request
-	request.Header = allHeaders
-	response, err := c.client.Do(request)
+	request.Header = allHeaders //Set custom and common headers for the request
+	client := c.getHTTPClient()
+	response, err := client.Do(request)
 	return response, err
+}
+
+//GetRequestBody: returns []byte,error
+func (c *httpClient) GetRequestBody(contentType string, body interface{}) ([]byte, error) {
+	if body == nil {
+		return nil, nil
+	}
+	switch strings.ToLower(contentType) { // Add support for different content-types
+	case "application/json":
+		return json.Marshal(body)
+	default:
+		return json.Marshal(body)
+	}
+}
+
+//getHTTPClient: returns *http.Client
+func (c *httpClient) getHTTPClient() *http.Client {
+	if c.client != nil {
+		return c.client
+	}
+	client := &http.Client{
+		Transport: &http.Transport{
+			MaxIdleConnsPerHost:   c.getmaxIdleConnections(),
+			ResponseHeaderTimeout: c.getresponseTimeout(), //Response timeout after request is send
+			DialContext: (&net.Dialer{
+				Timeout: c.getrconnectionTimeout(), // Socket connection timeout
+			}).DialContext,
+		},
+	}
+	c.client = client
+	return c.client
+}
+
+func (c *httpClient) getmaxIdleConnections() int {
+	if c.maxIdleConnections > 0 {
+		return c.maxIdleConnections
+	}
+	//Disable Timeouts
+	if c.disableTimeout {
+		return 0
+	}
+	return defaultmaxIdleConnections
+}
+
+func (c *httpClient) getresponseTimeout() time.Duration {
+	if c.responseTimeout > 0 {
+		return c.responseTimeout
+	}
+	//Disable Timeouts
+	if c.disableTimeout {
+		return 0
+	}
+	return defaultresponseTimeout
+}
+
+func (c *httpClient) getrconnectionTimeout() time.Duration {
+	if c.connectionTimeout > 0 {
+		return c.connectionTimeout
+	}
+	//Disable Timeouts
+	if c.disableTimeout {
+		return 0
+	}
+	return defaultconnectionTimeout
+}
+
+func (c *httpClient) disableTimeouts(disableTimeouts bool) {
+	c.disableTimeout = disableTimeouts
 }
 
 //getRequestHeaders returns custom headers from do() and common headers for httpClient instance

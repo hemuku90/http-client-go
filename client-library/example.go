@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/hemuku90/http-client-go/gohttp"
 )
@@ -79,6 +80,7 @@ func getRequest() {
 	commonHeaders := make(http.Header)
 	commonHeaders.Set("Content-Type", "application/json")
 	httpClient.SetHeaders(commonHeaders)
+	httpClient.SetConnectionTimeout(1 * time.Second)
 	response, err := httpClient.Get(PostUrl, nil)
 	if err != nil {
 		panic(err)

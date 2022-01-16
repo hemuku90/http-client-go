@@ -1,9 +1,7 @@
 package gohttp
 
 import (
-	"net"
 	"net/http"
-	"time"
 )
 
 /*
@@ -14,17 +12,7 @@ func main(){
 */
 
 func NewClient() HttpClient {
-	client := &httpClient{
-		client: &http.Client{
-			Transport: &http.Transport{
-				MaxIdleConnsPerHost:   5,
-				ResponseHeaderTimeout: 5 * time.Second, //Response timeout after request is send
-				DialContext: (&net.Dialer{
-					Timeout: 5 * time.Second, // Socket connection timeout
-				}).DialContext,
-			},
-		},
-	}
+	client := &httpClient{}
 	return client
 }
 

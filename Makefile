@@ -5,16 +5,18 @@ WHITE  := $(shell tput -Txterm setaf 7)
 RESET  := $(shell tput -Txterm sgr0)
 API_DIR:= "interview-accountapi/docker-compose.yml"
 HTTP_CLIENT_LIB_DIR:= "client-library/gohttp"
+GO_EXAMPLE := "client-library"
 #.Phony targets
-.PHONY: all startAPI stopAPI test coverage help
+.PHONY: all startAPI stopAPI test coverage testAPICalls help
 
 default: help
 help:
-	@echo  '  stopAPI     - Runs unit tests on all the packages'
-	@echo  '  all         - Runs unit tests on all the packages'
-	@echo  '  startAPI    - Starts the form3 fake accounts API'
-	@echo  '  coverage    - Tests coverage for HTTP Client library'
-	@echo  '  test        - Runs unit test on HTTP Client library'
+	@echo  '  stopAPI     				- Runs unit tests on all the packages'
+	@echo  '  all         				- Runs unit tests on all the packages'
+	@echo  '  startAPI    				- Starts the form3 fake accounts API'
+	@echo  '  coverage    				- Tests coverage for HTTP Client library'
+	@echo  '  test       			 	- Runs unit test on HTTP Client library'
+	@echo  '  testAPICalls       		- Makes API Calls to Fake Accounts API'
 
 all: startAPI test coverage stopAPI
 startAPI:
@@ -31,4 +33,7 @@ coverage:
 	@echo "${GREEN}############ Running Test Coverage #################"
 	go clean -testcache
 	pushd ${HTTP_CLIENT_LIB_DIR}  && go test -v -cover ./... && popd ${HTTP_CLIENT_LIB_DIR}
-  
+testAPICalls:
+	@echo "${GREEN}############ Running Test Coverage #################"
+	pushd ${GO_EXAMPLE} && go run example.go && popd ${GO_EXAMPLE}
+
