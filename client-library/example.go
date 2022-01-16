@@ -71,6 +71,8 @@ func main() {
 	postRequest()
 	fmt.Println(" ########### GET Request Output #######")
 	getRequest()
+	fmt.Println(" ########### DELETE Request Output #######")
+	deleteRequest()
 }
 
 func getRequest() {
@@ -78,6 +80,21 @@ func getRequest() {
 	commonHeaders.Set("Content-Type", "application/json")
 	httpClient.SetHeaders(commonHeaders)
 	response, err := httpClient.Get(PostUrl, nil)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(response.StatusCode)
+	bytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Printf("Error while reading the response body")
+	}
+	fmt.Println(string(bytes))
+}
+func deleteRequest() {
+	commonHeaders := make(http.Header)
+	commonHeaders.Set("Content-Type", "application/json")
+	httpClient.SetHeaders(commonHeaders)
+	response, err := httpClient.Delete(DeleteURL, nil)
 	if err != nil {
 		panic(err)
 	}
