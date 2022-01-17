@@ -3,8 +3,8 @@ GREEN  := $(shell tput -Txterm setaf 2)
 YELLOW := $(shell tput -Txterm setaf 3)
 WHITE  := $(shell tput -Txterm setaf 7)
 RESET  := $(shell tput -Txterm sgr0)
-API_DIR:= "interview-accountapi/docker-compose.yml"
-HTTP_CLIENT_LIB_DIR:= "client-library/gohttp"
+API_DOCKER_COMPOSE:= "interview-accountapi/docker-compose.yml"
+HTTP_CLIENT_LIB_DOCKER_COMPOSE:= "client-library/gohttp/docker/docker-compose.yml"
 GO_EXAMPLE := "client-library"
 health = $(shell curl localhost:8080/v1/health|jq '.status')
 #.Phony targets
@@ -19,28 +19,32 @@ help:
 	@echo  '  unitTest       			- Runs unit test on HTTP Client library'
 	@echo  '  testAPICalls       			- Makes API Calls to Fake Accounts API'
 
-all: stopAPI startAPI test coverage stopAPI
+all: stopAPI startAPI unitTest coverage
 
 startAPI:
 	@echo "${GREEN}############### Starting Form3 Fake Accounts API #####################"
-	docker-compose -f ${API_DIR} up -d
+	@echo
+	docker-compose -f ${API_DOCKER_COMPOSE} up -d
 
 stopAPI:
 	@echo "${GREEN}############### Stopping Form3 Fake Accounts API #####################"
-	docker-compose -f ${API_DIR} down
+	@echo
+	docker-compose -f ${API_DOCKER_COMPOSE} down
 
 unitTest:
-	@echo "${GREEN}############# Running Unit Tests ##############"
-	go clean -testcache
-	pushd ${HTTP_CLIENT_LIB_DIR} && go test -v ./... && popd ${HTTP_CLIENT_LIB_DIR}
+	@echo "${GREEN}###################### Running Unit Tests ############################"
+	@echo
+	docker-compose -f ${HTTP_CLIENT_LIB_DOCKER_COMPOSE} run --rm unit
 
 coverage:
-	@echo "${GREEN}############ Running Test Coverage #################"
-	go clean -testcache
-	pushd ${HTTP_CLIENT_LIB_DIR}  && go test -v -cover ./... && popd ${HTTP_CLIENT_LIB_DIR}
+	@echo "${GREEN}###################### Running Test Coverage #########################"
+	@echo
+	docker-compose -f ${HTTP_CLIENT_LIB_DOCKER_COMPOSE} run --rm coverage
+
 
 testAPICalls:
-	@echo "${GREEN}############ Running test API Calls #################"
-	docker-compose -f ${API_DIR} up -d
+	@echo "${GREEN}###################### Running test API Calls #########################"
+	@echo
+	docker-compose -f ${API_DOCKER_COMPOSE} up -d
 	pushd ${GO_EXAMPLE} && go run example.go && popd ${GO_EXAMPLE}
 

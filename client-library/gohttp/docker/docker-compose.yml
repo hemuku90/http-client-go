@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  unit:
+    image: golang:1.17
+    volumes:
+      - ../../:/usr/src/go-http-client-lib
+    working_dir: /usr/src/go-http-client-lib
+    command: bash -c "pushd gohttp && go mod tidy && go clean -testcache && go test -v ./... && go test --cover -v ./..."
+  coverage:
+    image: golang:1.17
+    volumes:
+      - ../../:/usr/src/go-http-client-lib
+    working_dir: /usr/src/go-http-client-lib
+    command: bash -c "pushd gohttp && go mod tidy && go clean -testcache && go test --cover -v ./..."
