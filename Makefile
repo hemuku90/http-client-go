@@ -16,7 +16,7 @@ help:
 	@echo  '  all         				- Runs unit tests on all the packages'
 	@echo  '  startAPI    				- Starts the form3 fake accounts API'
 	@echo  '  coverage    				- Tests coverage for HTTP Client library'
-	@echo  '  unitTest       			m- Runs unit test on HTTP Client library'
+	@echo  '  unitTest       			- Runs unit test on HTTP Client library'
 	@echo  '  testAPICalls       			- Makes API Calls to Fake Accounts API'
 
 all: stopAPI startAPI test coverage stopAPI
