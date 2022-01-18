@@ -7,4 +7,4 @@ In the root directory, we have both the API and the Client library just for the 
 
 
 There is a Makefile which is given as a utility for the reviwer to to interact with our API and the client library and should be asily be able to run unit tests, code coverage, start and stop the API.
-![Alt Dir](./images/dir_structure.png)
+![Screenshot](.images/dir_structure.png)
