@@ -8,3 +8,7 @@ In the root directory, we have both the API and the Client library just for the 
 
 There is a Makefile which is given as a utility for the reviwer to to interact with our API and the client library and should be asily be able to run unit tests, code coverage, start and stop the API.
 ![Screenshot](.images/dir_structure.png)
+In order to check all the Make targets, run make from the prject root directory.
+![Screenshot](.images/make_targets.png)
+In order to run the API and do unit tests, coverage on the client-library just run `make all`.
+![Screenshot](.images/make_all.png)
