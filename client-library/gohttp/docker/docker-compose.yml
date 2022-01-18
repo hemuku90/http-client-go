@@ -6,10 +6,14 @@ services:
     volumes:
       - ../../:/usr/src/go-http-client-lib
     working_dir: /usr/src/go-http-client-lib
-    command: bash -c "pushd gohttp && go mod tidy && go clean -testcache && go test -v ./... && go test --cover -v ./..."
+    command: bash -c "pushd gohttp && go mod tidy && go clean -testcache && go test -v"
   coverage:
     image: golang:1.17
     volumes:
       - ../../:/usr/src/go-http-client-lib
     working_dir: /usr/src/go-http-client-lib
-    command: bash -c "pushd gohttp && go mod tidy && go clean -testcache && go test --cover -v ./..."
+    command: bash -c "pushd gohttp && go mod tidy && go clean -testcache && go test --cover -v"
+networks:
+  default:
+    external: true
+    name: interview-accountapi_default

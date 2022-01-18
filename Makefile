@@ -8,7 +8,7 @@ HTTP_CLIENT_LIB_DOCKER_COMPOSE:= "client-library/gohttp/docker/docker-compose.ym
 GO_EXAMPLE := "client-library"
 health = $(shell curl localhost:8080/v1/health|jq '.status')
 #.Phony targets
-.PHONY: all startAPI stopAPI test coverage testAPICalls help
+.PHONY: all startAPI stopAPI test coverage help
 
 default: help
 help:
@@ -17,7 +17,6 @@ help:
 	@echo  '  startAPI    				- Starts the form3 fake accounts API'
 	@echo  '  coverage    				- Tests coverage for HTTP Client library'
 	@echo  '  unitTest       			- Runs unit test on HTTP Client library'
-	@echo  '  testAPICalls       			- Makes API Calls to Fake Accounts API'
 
 all: stopAPI startAPI unitTest coverage
 
@@ -40,11 +39,3 @@ coverage:
 	@echo "${GREEN}###################### Running Test Coverage #########################"
 	@echo
 	docker-compose -f ${HTTP_CLIENT_LIB_DOCKER_COMPOSE} run --rm coverage
-
-
-testAPICalls:
-	@echo "${GREEN}###################### Running test API Calls #########################"
-	@echo
-	docker-compose -f ${API_DOCKER_COMPOSE} up -d
-	pushd ${GO_EXAMPLE} && go run example.go && popd ${GO_EXAMPLE}
-

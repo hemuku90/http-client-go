@@ -22,9 +22,9 @@ func (c *httpClient) Delete(url string, headers http.Header) (*Response, error) 
 */
 
 const (
-	getURL    = "http://localhost:8080/v1/organisation/accounts/ad27e265-9605-4b4b-a0e5-3003ea9cc4dc"
-	postURL   = "http://localhost:8080/v1/organisation/accounts"
-	deleteURL = "http://localhost:8080/v1/organisation/accounts/ad27e265-9605-4b4b-a0e5-3003ea9cc4dc?version=0"
+	getURL    = "http://accountapi:8080/v1/organisation/accounts/ad27e265-9605-4b4b-a0e5-3003ea9cc4dc"
+	postURL   = "http://accountapi:8080/v1/organisation/accounts"
+	deleteURL = "http://accountapi:8080/v1/organisation/accounts/ad27e265-9605-4b4b-a0e5-3003ea9cc4dc?version=0"
 )
 
 // Mock Payload structure
