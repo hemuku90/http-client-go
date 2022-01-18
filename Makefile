@@ -18,12 +18,13 @@ help:
 	@echo  '  coverage    				- Tests coverage for HTTP Client library'
 	@echo  '  unitTest       			- Runs unit test on HTTP Client library'
 
-all: stopAPI startAPI unitTest coverage
+all: stopAPI startAPI unitTest coverage stopAPI
 
 startAPI:
 	@echo "${GREEN}############### Starting Form3 Fake Accounts API #####################"
 	@echo
 	docker-compose -f ${API_DOCKER_COMPOSE} up -d
+	sleep 5
 
 stopAPI:
 	@echo "${GREEN}############### Stopping Form3 Fake Accounts API #####################"
