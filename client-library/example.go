@@ -87,7 +87,7 @@ func getRequest() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(response.String())
+	fmt.Println(response.String(), response.GetStatusCode())
 }
 func deleteRequest() {
 	commonHeaders := make(http.Header)
@@ -96,7 +96,7 @@ func deleteRequest() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(response.String())
+	fmt.Println(response.String(), response.GetStatusCode())
 }
 
 func postRequest() {
@@ -107,5 +107,5 @@ func postRequest() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(response.String())
+	fmt.Println(response.String(), response.GetStatusCode())
 }
