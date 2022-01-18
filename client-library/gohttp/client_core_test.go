@@ -9,11 +9,13 @@ import (
 func TestGetRequestHeaders(t *testing.T) {
 	//Initialisation
 	client := httpClient{}
-	headers := make(http.Header)
-	headers.Set("Content-Type", "application/json")
-	headers.Set("User-Agent", "http-client")
-	client.headers = headers
-	//Execution
+	commonHeaders := make(http.Header)
+	commonHeaders.Set("Content-Type", "application/json")
+	commonHeaders.Set("User-Agent", "Custom-Http-Client")
+	client.builder = &clientBuilder{
+		headers: commonHeaders,
+	}
+	// //Execution
 	requestHeaders := make(http.Header)
 	requestHeaders.Set("Custom-Header", "Custom-HTTP-Client-Header")
 	actualHeaders := client.GetRequestHeaders(requestHeaders)
