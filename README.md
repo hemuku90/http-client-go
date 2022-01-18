@@ -17,3 +17,5 @@ In order to run the API and do unit tests, coverage on the client-library just r
 [httpClient-Library](client-library/README.md)
 
 [Form3-Fake-API](interview-accountapi/README.md)
+
+### NOTE: I am not new to go but done only basic work in my previous organisation and most of things that I have learned in Go is by myself. It has been over one and half years since I have touched go.
