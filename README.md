@@ -12,3 +12,8 @@ In order to check all the Make targets, run make from the prject root directory.
 ![Screenshot](.images/make_targets.png)
 In order to run the API and do unit tests, coverage on the client-library just run `make all`.
 ![Screenshot](.images/make_all.png)
+
+## Docs
+[httpClient-Library](client-library/README.md)
+
+[Form3-Fake-API](interview-accountapi/README.md)

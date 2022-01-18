@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/hemuku90/http-client-go/gohttp"
 )
@@ -17,9 +16,7 @@ const (
 
 //Singleton
 var (
-	httpClient = gohttp.NewBuilder().DisableTimeouts(true).
-		SetConnectionTimeout(2 * time.Second).
-		SetRequestTimeout(3 * time.Second).
+	httpClient = gohttp.NewBuilder().
 		Build()
 )
 
